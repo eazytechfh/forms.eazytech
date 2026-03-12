@@ -36,6 +36,7 @@ export default function ProspectForms() {
       numeroFuncionarios: formData.get("numeroFuncionarios"),
       numeroFuncionariosComercial: formData.get("numeroFuncionariosComercial"),
       quantidadeClientesAtivos: formData.get("quantidadeClientesAtivos"),
+      enderecoEmpresa: formData.get("enderecoEmpresa"),
 
       // Seção 1: Visão Estratégica e Objetivos
       marcosMoldaram: formData.get("marcosMoldaram"),
@@ -112,13 +113,6 @@ export default function ProspectForms() {
         >
           <Image src="/logo.webp" alt="Prospect Vendas" width={200} height={60} className="h-12 w-auto" />
         </a>
-        <nav className="flex items-center space-x-6">
-          <Link href="/diagnostico-contabilidade">
-            <Button className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-slate-900 font-bold px-6 py-2">
-              DIAGNÓSTICO CONTABILIDADE
-            </Button>
-          </Link>
-        </nav>
       </header>
 
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
@@ -320,6 +314,19 @@ export default function ProspectForms() {
                       required
                       className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
                       placeholder="Ex: 120 clientes ativos"
+                    />
+                  </div>
+                                    <div className="space-y-2">
+                    <Label htmlFor="enderecoEmpresa" className="text-white">
+                      Endereço da Empresa *
+                    </Label>
+                    <Input
+                      id="enderecoEmpresa"
+                      name="enderecoEmpresa"
+                      type="text"
+                      required
+                      className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
+                      placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
                     />
                   </div>
                 </div>
