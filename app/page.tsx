@@ -720,7 +720,7 @@ export default function ProspectForms() {
 
                    <div className="space-y-2">
                     <Label htmlFor="impactoDireto" className="text-white">
-                      6.2. Qual o impacto direto ou indireto desses gargalos e frustrações nos resultados da empresa? *
+                      6.3. Qual o impacto direto ou indireto desses gargalos e frustrações nos resultados da empresa? *
                     </Label>
                     <Textarea
                       id="impactoDireto"
