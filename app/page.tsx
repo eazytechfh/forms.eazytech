@@ -29,14 +29,14 @@ export default function ProspectForms() {
       cliente: formData.get("cliente"),
       telefoneContato: formData.get("telefoneContato"),
       cnpj: formData.get("cnpj"),
-      website: formData.get("website"),
+      enderecoEmpresa: formData.get("enderecoEmpresa"),
       redesSociais: formData.get("redesSociais"),
       areaAtuacao: formData.get("areaAtuacao"),
       faturamentoAnual: formData.get("faturamentoAnual"),
       numeroFuncionarios: formData.get("numeroFuncionarios"),
       numeroFuncionariosComercial: formData.get("numeroFuncionariosComercial"),
       quantidadeClientesAtivos: formData.get("quantidadeClientesAtivos"),
-      enderecoEmpresa: formData.get("enderecoEmpresa"),
+      website: formData.get("website"),
 
       // Seção 1: Visão Estratégica e Objetivos
       marcosMoldaram: formData.get("marcosMoldaram"),
@@ -182,7 +182,7 @@ export default function ProspectForms() {
                       </Label>
                       <Input
                         id="nomeContatoprincipal"
-                        name="connomeContatoprincipalsultor"
+                        name="nomeContatoprincipalsultor"
                         required
                         className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
                         placeholder="Nome do Contato Principal"
