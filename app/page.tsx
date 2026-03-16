@@ -103,7 +103,6 @@ export default function ProspectForms() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Header */}
       <header className="flex h-20 w-full items-center justify-between px-4 md:px-6">
         <a
           href="https://www.prospectvendas.com.br"
@@ -138,7 +137,6 @@ export default function ProspectForms() {
         </DialogContent>
       </Dialog>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Formulário de Avaliação</h1>
@@ -160,9 +158,9 @@ export default function ProspectForms() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleDiretoriaSubmit} className="space-y-8">
-                {/* Informações Básicas */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-4">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">Informações Básicas</h3>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="data" className="text-white">
@@ -176,19 +174,21 @@ export default function ProspectForms() {
                         className="bg-slate-600 border-slate-500 text-white"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="nomeContatoprincipal" className="text-white">
                         Nome do Contato principal (Cliente)*
                       </Label>
                       <Input
                         id="nomeContatoprincipal"
-                        name="nomeContatoprincipalsultor"
+                        name="nomeContatoprincipal"
                         required
                         className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
                         placeholder="Nome do Contato Principal"
                       />
                     </div>
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="cliente" className="text-white">
                       Nome da Empresa (Razão Social) *
@@ -201,6 +201,7 @@ export default function ProspectForms() {
                       placeholder="Nome da empresa"
                     />
                   </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="telefoneContato" className="text-white">
@@ -215,6 +216,7 @@ export default function ProspectForms() {
                         placeholder="(11) 99999-9999"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="cnpj" className="text-white">
                         CNPJ da empresa *
@@ -228,7 +230,8 @@ export default function ProspectForms() {
                       />
                     </div>
                   </div>
-                                                      <div className="space-y-2">
+
+                  <div className="space-y-2">
                     <Label htmlFor="enderecoEmpresa" className="text-white">
                       Endereço da Empresa *
                     </Label>
@@ -241,6 +244,7 @@ export default function ProspectForms() {
                       placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="redesSociais" className="text-white">
                       Redes Sociais (Links principais, ex: LinkedIn/Instagram)
@@ -252,6 +256,7 @@ export default function ProspectForms() {
                       placeholder="https://linkedin.com/company/exemplo"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="areaAtuacao" className="text-white">
                       Área de atuação *
@@ -264,6 +269,7 @@ export default function ProspectForms() {
                       placeholder="Ex: Indústria Metalúrgica, SaaS B2B, Advocacia Empresarial"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="faturamentoAnual" className="text-white">
                       Faturamento Anual Bruto *
@@ -276,6 +282,7 @@ export default function ProspectForms() {
                       placeholder="Ex: R$ 5M/ano"
                     />
                   </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="numeroFuncionarios" className="text-white">
@@ -290,6 +297,7 @@ export default function ProspectForms() {
                         placeholder="Ex: 45"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="numeroFuncionariosComercial" className="text-white">
                         Número de Funcionários (Comercial) *
@@ -304,6 +312,7 @@ export default function ProspectForms() {
                       />
                     </div>
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="quantidadeClientesAtivos" className="text-white">
                       Quantos clientes a empresa possui atualmente? *
@@ -317,6 +326,7 @@ export default function ProspectForms() {
                       placeholder="Ex: 120 clientes ativos"
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="website" className="text-white">
                       Website
@@ -331,7 +341,6 @@ export default function ProspectForms() {
                   </div>
                 </div>
 
-                {/* Seção 1: Visão Estratégica e Objetivos */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-6">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">Seção 1: Visão Estratégica e Objetivos</h3>
                   <p className="text-gray-300 text-sm italic">Foco: Para onde a empresa está indo.</p>
@@ -396,7 +405,9 @@ export default function ProspectForms() {
 
                   <div className="space-y-2">
                     <Label htmlFor="principalDesafio" className="text-white">
-                      1.5. Considerando esses objetivos para os próximos 6-12 meses e sua visão para 2-3 anos, qual você identifica como o principal desafio ou obstáculo que a empresa precisa superar para alcançá-los? *
+                      1.5. Considerando esses objetivos para os próximos 6-12 meses e sua visão para 2-3 anos, qual
+                      você identifica como o principal desafio ou obstáculo que a empresa precisa superar para
+                      alcançá-los? *
                     </Label>
                     <Textarea
                       id="principalDesafio"
@@ -409,7 +420,6 @@ export default function ProspectForms() {
                   </div>
                 </div>
 
-                {/* Seção 2: Mercado e Posicionamento */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-6">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">Seção 2: Mercado e Posicionamento</h3>
                   <p className="text-gray-300 text-sm italic">Foco: Onde a empresa compete e por que ela ganha.</p>
@@ -475,7 +485,8 @@ export default function ProspectForms() {
 
                   <div className="space-y-2">
                     <Label htmlFor="buscadosclientesideais" className="text-white">
-                      2.5. Como seus clientes ideais (ICP) tipicamente buscam e descobrem soluções como a sua? Quais canais ou fontes de informação eles mais utilizam para pesquisar e tomar decisões? *
+                      2.5. Como seus clientes ideais (ICP) tipicamente buscam e descobrem soluções como a sua? Quais
+                      canais ou fontes de informação eles mais utilizam para pesquisar e tomar decisões? *
                     </Label>
                     <Textarea
                       id="buscadosclientesideais"
@@ -485,13 +496,12 @@ export default function ProspectForms() {
                       className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
                       placeholder="Descreva como geralmente seus clientes ideais buscam e descobrem soluções como a sua."
                     />
-                  </div> 
+                  </div>
                 </div>
 
-                {/* Seção 3: Processo de Aquisição e Venda */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-6">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">Seção 3: Processo de Aquisição e Venda</h3>
-                  <p className="text-gray-300 text-sm italic">Foco: O "Como" - A jornada prática do cliente.</p>
+                  <p className="text-gray-300 text-sm italic">Foco: O 'Como' - A jornada prática do cliente.</p>
 
                   <div className="space-y-2">
                     <Label htmlFor="canaisAquisicao" className="text-white">
@@ -553,7 +563,9 @@ export default function ProspectForms() {
 
                   <div className="space-y-2">
                     <Label htmlFor="etapadepercepcao" className="text-white">
-                    3.5. Ao longo dessa jornada do cliente, em qual etapa você percebe que a empresa perde mais oportunidades ou que o processo se torna mais lento? Se possível, qual é a taxa de conversão aproximada entre as principais etapas? *
+                      3.5. Ao longo dessa jornada do cliente, em qual etapa você percebe que a empresa perde mais
+                      oportunidades ou que o processo se torna mais lento? Se possível, qual é a taxa de conversão
+                      aproximada entre as principais etapas? *
                     </Label>
                     <Textarea
                       id="etapadepercepcao"
@@ -566,10 +578,9 @@ export default function ProspectForms() {
                   </div>
                 </div>
 
-                {/* Seção 4: Equipe Comercial e Gestão */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-6">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">Seção 4: Equipe Comercial e Gestão</h3>
-                  <p className="text-gray-300 text-sm italic">Foco: O "Quem" - As pessoas que executam o processo.</p>
+                  <p className="text-gray-300 text-sm italic">Foco: O 'Quem' - As pessoas que executam o processo.</p>
 
                   <div className="space-y-2">
                     <Label htmlFor="composicaoEquipe" className="text-white">
@@ -613,9 +624,11 @@ export default function ProspectForms() {
                     />
                   </div>
 
-                                    <div className="space-y-2">
+                  <div className="space-y-2">
                     <Label htmlFor="buscaAprimoramento" className="text-white">
-                      4.4. Considerando que a venda é muitas vezes conduzida por você ou por uma pessoa chave, e que o processo pode ser mais intuitivo, como vocês buscam aprimorar a forma de vender e apresentar o produto/serviço? Há alguma prática ou recurso que utilizam para aprender e evoluir nesse aspecto? *
+                      4.4. Considerando que a venda é muitas vezes conduzida por você ou por uma pessoa chave, e que o
+                      processo pode ser mais intuitivo, como vocês buscam aprimorar a forma de vender e apresentar o
+                      produto/serviço? Há alguma prática ou recurso que utilizam para aprender e evoluir nesse aspecto? *
                     </Label>
                     <Textarea
                       id="buscaAprimoramento"
@@ -628,7 +641,6 @@ export default function ProspectForms() {
                   </div>
                 </div>
 
-                {/* Seção 5: Tecnologia e Ferramentas (Tech Stack) */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-6">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">
                     Seção 5: Tecnologia e Ferramentas (Tech Stack)
@@ -649,6 +661,7 @@ export default function ProspectForms() {
                           />
                         </div>
                       </label>
+
                       <label className="flex items-center space-x-3 text-white cursor-pointer">
                         <input type="radio" name="possuiCRM" value="Não, gerenciamos por planilhas ou outro método" />
                         <span>Não, gerenciamos por planilhas ou outro método</span>
@@ -670,9 +683,10 @@ export default function ProspectForms() {
                     />
                   </div>
 
-                   <div className="space-y-2">
+                  <div className="space-y-2">
                     <Label htmlFor="funcionalidadesouFerramentas" className="text-white">
-                      5.3. Quais funcionalidades ou ferramentas vocês sentem falta para otimizar a gestão comercial, ou quais integrações entre as ferramentas atuais seriam importantes para a empresa? *
+                      5.3. Quais funcionalidades ou ferramentas vocês sentem falta para otimizar a gestão comercial, ou
+                      quais integrações entre as ferramentas atuais seriam importantes para a empresa? *
                     </Label>
                     <Textarea
                       id="funcionalidadesouFerramentas"
@@ -685,7 +699,6 @@ export default function ProspectForms() {
                   </div>
                 </div>
 
-                {/* Seção 6: Desafios e Obstáculos */}
                 <div className="bg-slate-700 p-6 rounded-lg space-y-6">
                   <h3 className="text-xl font-semibold text-yellow-400 mb-4">Seção 6: Desafios e Obstáculos</h3>
                   <p className="text-gray-300 text-sm italic">Foco: Os problemas a serem resolvidos.</p>
@@ -718,7 +731,7 @@ export default function ProspectForms() {
                     />
                   </div>
 
-                   <div className="space-y-2">
+                  <div className="space-y-2">
                     <Label htmlFor="impactoDireto" className="text-white">
                       6.3 . Qual o impacto direto ou indireto desses gargalos e frustrações nos resultados da empresa? *
                     </Label>
@@ -746,7 +759,6 @@ export default function ProspectForms() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-700 py-8 mt-16">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-400">© 2025 Prospect Vendas. Todos os direitos reservados.</p>
