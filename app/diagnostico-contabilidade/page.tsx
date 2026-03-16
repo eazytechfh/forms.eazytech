@@ -20,11 +20,12 @@ export default function DiagnosticoContabilidade() {
   const [formData, setFormData] = useState({
     // Seção 1: Identidade e Raízes
     nomeEscritorio: "",
-    nomeConsultor: "",
+    nomeContatoprincipal: "",
     cnpj: "",
     telefone: "",
-    siteLinkedin: "",
+    site: "",
     redesSociais: "",
+    endereçoDoescritorio: "",
     principalAreaAtuacao: "",
     faturamentoAnual: "",
     numeroColaboradores: "",
@@ -176,13 +177,13 @@ export default function DiagnosticoContabilidade() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="nomeConsultor" className="text-gray-300">
-                        Nome do Consultor:
+                      <Label htmlFor="nomeContatoprincipal" className="text-gray-300">
+                        Nome do Contato Principal:
                       </Label>
                       <Input
-                        id="nomeConsultor"
-                        value={formData.nomeConsultor}
-                        onChange={(e) => handleInputChange("nomeConsultor", e.target.value)}
+                        id="nomeContatoprincipal"
+                        value={formData.nomeContatoprincipal}
+                        onChange={(e) => handleInputChange("nomeContatoprincipal", e.target.value)}
                         className="bg-slate-700 border-slate-600 text-white"
                         required
                       />
@@ -215,19 +216,19 @@ export default function DiagnosticoContabilidade() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="siteLinkedin" className="text-gray-300">
-                        Site e LinkedIn do Escritório:
+                      <Label htmlFor="site" className="text-gray-300">
+                        Site :
                       </Label>
                       <Input
-                        id="siteLinkedin"
-                        value={formData.siteLinkedin}
-                        onChange={(e) => handleInputChange("siteLinkedin", e.target.value)}
+                        id="site"
+                        value={formData.site}
+                        onChange={(e) => handleInputChange("site", e.target.value)}
                         className="bg-slate-700 border-slate-600 text-white"
-                        placeholder="Ex: www.meuescritorio.com.br / linkedin.com/company/meuescritorio"
+                        placeholder="Ex: www.meuescritorio.com.br"
                       />
                     </div>
 
-                                        <div className="space-y-2">
+                      <div className="space-y-2">
                       <Label htmlFor="redesSociais" className="text-gray-300">
                         Redes Sociais (Links principais, ex: LinkedIn/Instagram):
                       </Label>
@@ -238,6 +239,20 @@ export default function DiagnosticoContabilidade() {
                         className="bg-slate-700 border-slate-600 text-white"
                         placeholder="Ex: www.meuescritorio.com.br / linkedin.com/company/meuescritorio"
                       />
+                    </div>
+
+                                         <div className="space-y-2">
+                      <Label htmlFor="endereçoDoescritorio" className="text-gray-300">
+                        Endereço do escritório:
+                      </Label>
+                      <Input
+                        id="endereçoDoescritorio"
+                        value={formData.endereçoDoescritorio}
+                        onChange={(e) => handleInputChange("endereçoDoescritorio", e.target.value)}
+                        className="bg-slate-700 border-slate-600 text-white"
+                        placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
+                      />
+
                     </div>
                   </div>
 

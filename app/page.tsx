@@ -25,7 +25,7 @@ export default function ProspectForms() {
 
     const data = {
       data: formData.get("data"),
-      consultor: formData.get("consultor"),
+      nomeContatoprincipal: formData.get("nomeContatoprincipal"),
       cliente: formData.get("cliente"),
       telefoneContato: formData.get("telefoneContato"),
       cnpj: formData.get("cnpj"),
@@ -177,21 +177,21 @@ export default function ProspectForms() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="consultor" className="text-white">
-                        Consultor *
+                      <Label htmlFor="nomeContatoprincipal" className="text-white">
+                        Nome do Contato principal (Cliente)*
                       </Label>
                       <Input
-                        id="consultor"
-                        name="consultor"
+                        id="nomeContatoprincipal"
+                        name="connomeContatoprincipalsultor"
                         required
                         className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
-                        placeholder="Nome do consultor"
+                        placeholder="Nome do Contato Principal"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="cliente" className="text-white">
-                      Cliente (Nome da Empresa) *
+                      Nome da Empresa (Razão Social) *
                     </Label>
                     <Input
                       id="cliente"
@@ -228,16 +228,17 @@ export default function ProspectForms() {
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="website" className="text-white">
-                      Website
+                                                      <div className="space-y-2">
+                    <Label htmlFor="enderecoEmpresa" className="text-white">
+                      Endereço da Empresa *
                     </Label>
                     <Input
-                      id="website"
-                      name="website"
-                      type="url"
+                      id="enderecoEmpresa"
+                      name="enderecoEmpresa"
+                      type="text"
+                      required
                       className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
-                      placeholder="https://www.exemplo.com.br"
+                      placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
                     />
                   </div>
                   <div className="space-y-2">
@@ -316,17 +317,16 @@ export default function ProspectForms() {
                       placeholder="Ex: 120 clientes ativos"
                     />
                   </div>
-                                    <div className="space-y-2">
-                    <Label htmlFor="enderecoEmpresa" className="text-white">
-                      Endereço da Empresa *
+                  <div className="space-y-2">
+                    <Label htmlFor="website" className="text-white">
+                      Website
                     </Label>
                     <Input
-                      id="enderecoEmpresa"
-                      name="enderecoEmpresa"
-                      type="text"
-                      required
+                      id="website"
+                      name="website"
+                      type="url"
                       className="bg-slate-600 border-slate-500 text-white placeholder:text-gray-400"
-                      placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
+                      placeholder="https://www.exemplo.com.br"
                     />
                   </div>
                 </div>
@@ -720,7 +720,7 @@ export default function ProspectForms() {
 
                    <div className="space-y-2">
                     <Label htmlFor="impactoDireto" className="text-white">
-                      6.3. Qual o impacto direto ou indireto desses gargalos e frustrações nos resultados da empresa? *
+                      6.3 . Qual o impacto direto ou indireto desses gargalos e frustrações nos resultados da empresa? *
                     </Label>
                     <Textarea
                       id="impactoDireto"
