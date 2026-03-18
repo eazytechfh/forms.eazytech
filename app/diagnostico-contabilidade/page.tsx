@@ -23,9 +23,9 @@ export default function DiagnosticoContabilidade() {
     nomeContatoprincipal: "",
     cnpj: "",
     telefone: "",
-    site: "",
-    redesSociais: "",
     endereçoDoescritorio: "",
+    redesSociais: "",
+    site: "",
     principalAreaAtuacao: "",
     faturamentoAnual: "",
     numeroColaboradores: "",
@@ -215,17 +215,18 @@ export default function DiagnosticoContabilidade() {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="site" className="text-gray-300">
-                        Site :
+                                                             <div className="space-y-2">
+                      <Label htmlFor="endereçoDoescritorio" className="text-gray-300">
+                        Endereço do escritório:
                       </Label>
                       <Input
-                        id="site"
-                        value={formData.site}
-                        onChange={(e) => handleInputChange("site", e.target.value)}
+                        id="endereçoDoescritorio"
+                        value={formData.endereçoDoescritorio}
+                        onChange={(e) => handleInputChange("endereçoDoescritorio", e.target.value)}
                         className="bg-slate-700 border-slate-600 text-white"
-                        placeholder="Ex: www.meuescritorio.com.br"
+                        placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
                       />
+
                     </div>
 
                       <div className="space-y-2">
@@ -241,18 +242,17 @@ export default function DiagnosticoContabilidade() {
                       />
                     </div>
 
-                                         <div className="space-y-2">
-                      <Label htmlFor="endereçoDoescritorio" className="text-gray-300">
-                        Endereço do escritório:
+                    <div className="space-y-2">
+                      <Label htmlFor="site" className="text-gray-300">
+                        Site :
                       </Label>
                       <Input
-                        id="endereçoDoescritorio"
-                        value={formData.endereçoDoescritorio}
-                        onChange={(e) => handleInputChange("endereçoDoescritorio", e.target.value)}
+                        id="site"
+                        value={formData.site}
+                        onChange={(e) => handleInputChange("site", e.target.value)}
                         className="bg-slate-700 border-slate-600 text-white"
-                        placeholder="Ex: Rua Exemplo, 123 - Centro, Rio de Janeiro/RJ"
+                        placeholder="Ex: www.meuescritorio.com.br"
                       />
-
                     </div>
                   </div>
 
@@ -700,7 +700,7 @@ export default function DiagnosticoContabilidade() {
                     disabled={isSubmitting}
                     className="bg-green-600 hover:bg-green-700 text-white px-12 py-6 text-lg"
                   >
-                    {isSubmitting ? "Enviando..." : "Enviar Diagnóstico"}
+                    {isSubmitting ? "Enviando..." : "Enviar Formulário"}
                   </Button>
                 </div>
               </form>
