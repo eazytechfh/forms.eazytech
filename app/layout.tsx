@@ -7,12 +7,13 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Prospect Vendas',
-  description: 'Prospect Vendas',
-  generator: 'Prospect Vendas',
+  title: 'Eazytech - Briefing',
+  description: 'Eazytech - Briefing',
+  generator: 'Eazytech - Briefing',
   icons: {
-    icon: '/icon.png',
-    apple: '/apple-icon.png',
+    icon: '/s-c3-admbolo-20gradiente.png',
+    shortcut: '/s-c3-admbolo-20gradiente.png',
+    apple: '/s-c3-admbolo-20gradiente.png',
   },
 }
 
