@@ -2,6 +2,7 @@
   "name": "prospect-vendas",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.29.2",
   "engines": {
     "node": "22.x"
   },
