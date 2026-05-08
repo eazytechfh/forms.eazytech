@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description: 'Preencha seu briefing em etapas curtas e objetivas.',
     url: 'https://briefing-ia.eazy.tec.br',
     siteName: 'Eazytech - Briefing',
-    images: [{ url: 'https://briefing-ia.eazy.tec.br/opengraph-image.png', width: 1200, height: 630, alt: 'Eazytech - Briefing' }],
+    images: [{ url: 'https://briefing-ia.eazy.tec.br/opengraph-image-v2.png', width: 1200, height: 630, alt: 'Eazytech - Briefing' }],
     type: 'website',
   },
   icons: {
