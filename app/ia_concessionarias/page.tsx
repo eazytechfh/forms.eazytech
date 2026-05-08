@@ -126,12 +126,18 @@ const blocks: Block[] = [
         type: "textarea",
       },
       {
-        name: "gmailCanais",
-        label: "Acesso ao Gmail que recebe os e-mails dos canais de atendimento",
-        placeholder: "Informe o email, senha ou o fluxo de acesso utilizado",
-        type: "textarea",
+        name: "gmailCanaisEmail",
+        label: "Informe o acesso ao Gmail que recebe os e-mails dos canais de atendimento.",
+        placeholder: "email@exemplo.com",
+        type: "text",
         required: true,
-        helper: "Ex: Revenda Mais, SO CARRAO, Chaves na Mao, WebMotors e outros canais.",
+      },
+      {
+        name: "gmailCanaisSenha",
+        label: "Senha",
+        placeholder: "senha123",
+        type: "text",
+        required: true,
       },
     ],
   },
@@ -174,6 +180,12 @@ const blocks: Block[] = [
         kind: "checkbox",
         label: "Quais informacoes a IA pode informar ao lead?",
         options: ["Quilometragem", "Valor", "Cor", "Ano", "Motor", "Modelo", "Imagem"],
+        required: true,
+      },
+      {
+        name: "nomeIa",
+        label: "Digite abaixo o nome que voce deseja que a IA se chame:",
+        placeholder: "Digite o nome da IA",
         required: true,
       },
     ],
@@ -277,10 +289,13 @@ export default function IaConcessionariasPage() {
 
     setIsSubmitting(true)
 
+    const { gmailCanaisEmail = "", gmailCanaisSenha = "", ...textPayload } = textValues
+
     const payload = {
       tipoFormulario: "Briefing IA - Concessionarias",
       enviadoEm: new Date().toISOString(),
-      ...textValues,
+      ...textPayload,
+      gmailCanais: `${gmailCanaisEmail.trim()} / ${gmailCanaisSenha.trim()}`,
       ...radioValues,
       ...Object.fromEntries(Object.entries(checkboxValues).map(([key, value]) => [key, value.join(", ")])),
     }
@@ -499,6 +514,55 @@ export default function IaConcessionariasPage() {
                         }
 
                         const textQuestion = question as TextQuestion
+
+                        if (question.name === "gmailCanaisSenha") return null
+
+                        if (question.name === "gmailCanaisEmail") {
+                          const passwordQuestion = currentBlock.questions.find(
+                            (item) => item.name === "gmailCanaisSenha",
+                          ) as TextQuestion | undefined
+
+                          return (
+                            <div key={question.name} className="space-y-3">
+                              <Label className="text-sm font-semibold text-slate-800">
+                                {question.label}
+                                {question.required ? " *" : ""}
+                              </Label>
+                              <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                  <Label htmlFor={question.name} className="text-sm font-semibold text-slate-800">
+                                    Email *
+                                  </Label>
+                                  <Input
+                                    id={question.name}
+                                    type="text"
+                                    value={textValues[question.name] ?? ""}
+                                    onChange={(e) => updateTextField(question.name, e.target.value)}
+                                    placeholder={textQuestion.placeholder}
+                                    className="h-12 rounded-2xl border-violet-200 bg-violet-50/55 text-slate-900 placeholder:text-slate-400 focus-visible:border-violet-400 focus-visible:ring-violet-300"
+                                  />
+                                </div>
+
+                                {passwordQuestion ? (
+                                  <div className="space-y-2">
+                                    <Label htmlFor={passwordQuestion.name} className="text-sm font-semibold text-slate-800">
+                                      {passwordQuestion.label}
+                                      {passwordQuestion.required ? " *" : ""}
+                                    </Label>
+                                    <Input
+                                      id={passwordQuestion.name}
+                                      type="text"
+                                      value={textValues[passwordQuestion.name] ?? ""}
+                                      onChange={(e) => updateTextField(passwordQuestion.name, e.target.value)}
+                                      placeholder={passwordQuestion.placeholder}
+                                      className="h-12 rounded-2xl border-violet-200 bg-violet-50/55 text-slate-900 placeholder:text-slate-400 focus-visible:border-violet-400 focus-visible:ring-violet-300"
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            </div>
+                          )
+                        }
 
                         return (
                           <div key={question.name} className="space-y-2">
