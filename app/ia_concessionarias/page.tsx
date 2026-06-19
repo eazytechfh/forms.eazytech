@@ -116,7 +116,21 @@ const blocks: Block[] = [
         name: "portaisAtivos",
         kind: "checkbox",
         label: "Quais sao os portais que voces possuem?",
-        options: ["Revenda Mais", "SO CARRAO", "Chaves na Mao", "WebMotors", "Outros"],
+        options: ["Revenda Mais", "SO CARRAO", "Chaves na Mao", "WebMotors", "MobiAuto", "Na Pista", "OLX", "Outros"],
+        required: true,
+      },
+      {
+        name: "olxEmail",
+        label: "Acesso ao OLX - Email",
+        placeholder: "Digite o email de acesso",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "olxSenha",
+        label: "Acesso ao OLX - Senha",
+        placeholder: "Digite a senha de acesso",
+        type: "text",
         required: true,
       },
       {
@@ -127,7 +141,7 @@ const blocks: Block[] = [
       },
       {
         name: "gmailCanaisEmail",
-        label: "Informe o acesso ao Gmail que recebe os e-mails dos canais de atendimento.",
+        label: "Informe o acesso do e-mail que atualmente vocês recebem os e-mails dos leads que chegam pelos canais de atendimento.",
         placeholder: "email@exemplo.com",
         type: "text",
         required: true,
@@ -137,6 +151,13 @@ const blocks: Block[] = [
         label: "Senha",
         placeholder: "senha123",
         type: "text",
+        required: true,
+      },
+      {
+        name: "confirmaEmailPortais",
+        kind: "radio",
+        label: "Você confirma que todos os e-mails que chegam nos portais de atendimento mencionados, chegam exatamente nesse e-mail cadastrado acima?",
+        options: ["Sim", "Não"],
         required: true,
       },
     ],
@@ -250,8 +271,17 @@ export default function IaConcessionariasPage() {
     return textValues[question.name] ?? ""
   }
 
+  const isQuestionVisible = (question: Question) => {
+    if (question.name === "olxEmail" || question.name === "olxSenha") {
+      return (checkboxValues.portaisAtivos ?? []).includes("OLX")
+    }
+
+    return true
+  }
+
   const validateBlock = (block: Block) => {
     const hasMissing = block.questions.some((question) => {
+      if (!isQuestionVisible(question)) return false
       if (!question.required) return false
       const value = getQuestionValue(question)
       if (Array.isArray(value)) return value.length === 0
@@ -515,7 +545,56 @@ export default function IaConcessionariasPage() {
 
                         const textQuestion = question as TextQuestion
 
+                        if (!isQuestionVisible(question)) return null
+                        if (question.name === "olxSenha") return null
                         if (question.name === "gmailCanaisSenha") return null
+
+                        if (question.name === "olxEmail") {
+                          const passwordQuestion = currentBlock.questions.find((item) => item.name === "olxSenha") as
+                            | TextQuestion
+                            | undefined
+
+                          return (
+                            <div key={question.name} className="space-y-3">
+                              <Label className="text-sm font-semibold text-slate-800">
+                                {question.label}
+                                {question.required ? " *" : ""}
+                              </Label>
+                              <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                  <Label htmlFor={question.name} className="text-sm font-semibold text-slate-800">
+                                    Email *
+                                  </Label>
+                                  <Input
+                                    id={question.name}
+                                    type="text"
+                                    value={textValues[question.name] ?? ""}
+                                    onChange={(e) => updateTextField(question.name, e.target.value)}
+                                    placeholder={textQuestion.placeholder}
+                                    className="h-12 rounded-2xl border-violet-200 bg-violet-50/55 text-slate-900 placeholder:text-slate-400 focus-visible:border-violet-400 focus-visible:ring-violet-300"
+                                  />
+                                </div>
+
+                                {passwordQuestion ? (
+                                  <div className="space-y-2">
+                                    <Label htmlFor={passwordQuestion.name} className="text-sm font-semibold text-slate-800">
+                                      {passwordQuestion.label}
+                                      {passwordQuestion.required ? " *" : ""}
+                                    </Label>
+                                    <Input
+                                      id={passwordQuestion.name}
+                                      type="text"
+                                      value={textValues[passwordQuestion.name] ?? ""}
+                                      onChange={(e) => updateTextField(passwordQuestion.name, e.target.value)}
+                                      placeholder={passwordQuestion.placeholder}
+                                      className="h-12 rounded-2xl border-violet-200 bg-violet-50/55 text-slate-900 placeholder:text-slate-400 focus-visible:border-violet-400 focus-visible:ring-violet-300"
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            </div>
+                          )
+                        }
 
                         if (question.name === "gmailCanaisEmail") {
                           const passwordQuestion = currentBlock.questions.find(
