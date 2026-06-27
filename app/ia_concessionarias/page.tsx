@@ -21,6 +21,7 @@ type BaseQuestion = {
   label: string
   required?: boolean
   helper?: string
+  cardTitle?: string
 }
 
 type TextQuestion = BaseQuestion & {
@@ -163,8 +164,55 @@ const blocks: Block[] = [
     ],
   },
   {
-    id: "regrasIa",
+    id: "regrasCondutaIa",
     badge: "Bloco 3",
+    title: "Regras de conduta da IA",
+    description: "Como a IA deve agir em situacoes especificas",
+    questions: [
+      {
+        name: "pos_venda",
+        cardTitle: "Pos-venda",
+        label:
+          "Quando um cliente comprador entrar em contato apos a compra, para qual pessoa ele deve ser transferido? (Ex: gerente, atendente especifico?)",
+        placeholder: "Descreva para quem transferir e em qual situacao...",
+        type: "textarea",
+      },
+      {
+        name: "nome_sujo",
+        cardTitle: "Nome sujo / restricao no CPF",
+        label:
+          "Qual deve ser a conduta da IA quando o lead informar que possui restricao no nome? (Ex: informar que nao e possivel financiar, oferecer apenas pagamento a vista, encerrar o atendimento, transferir para humano?)",
+        placeholder: "Descreva a conduta esperada...",
+        type: "textarea",
+      },
+      {
+        name: "veiculo_fora_estoque",
+        cardTitle: "Veiculo fora do estoque",
+        label:
+          "Se o lead pedir um modelo que nao esta no estoque, a IA deve oferecer alternativas? Se sim, pode sugerir qualquer veiculo ou seguir algum criterio? Quando deve transferir para um vendedor?",
+        placeholder: "Descreva como a IA deve agir nessa situacao...",
+        type: "textarea",
+      },
+      {
+        name: "sinistro",
+        cardTitle: "Sinistro",
+        label: "O que a IA deve dizer quando o lead perguntar sobre veiculos sinistrados ou mencionar sinistro?",
+        placeholder: "Ex: informar que os veiculos sao todos sem sinistro e seguir, ou transferir para humano...",
+        type: "textarea",
+      },
+      {
+        name: "formas_pagamento",
+        cardTitle: "Formas de pagamento",
+        label:
+          "Voces aceitam boleto ou promissoria? Cartao de credito e aceito? Ha limite de parcelas no cartao ou alguma observacao?",
+        placeholder: "Descreva as formas de pagamento aceitas e restricoes...",
+        type: "textarea",
+      },
+    ],
+  },
+  {
+    id: "regrasIa",
+    badge: "Bloco 4",
     title: "Distribuicao e regras da IA",
     description: "Fechamos com a logica de distribuicao, atendimento e limites da IA.",
     questions: [
@@ -401,7 +449,7 @@ export default function IaConcessionariasPage() {
               >
                 Preencher Formulario
               </Button>
-              <p className="text-sm text-slate-500">3 blocos para estruturar a IA da sua concessionaria.</p>
+              <p className="text-sm text-slate-500">4 blocos para estruturar a IA da sua concessionaria.</p>
             </div>
           </div>
         </main>
@@ -643,7 +691,7 @@ export default function IaConcessionariasPage() {
                           )
                         }
 
-                        return (
+                        const field = (
                           <div key={question.name} className="space-y-2">
                             <Label htmlFor={question.name} className="text-sm font-semibold text-slate-800">
                               {question.label}
@@ -671,6 +719,20 @@ export default function IaConcessionariasPage() {
                             )}
                           </div>
                         )
+
+                        if (textQuestion.cardTitle) {
+                          return (
+                            <div
+                              key={question.name}
+                              className="rounded-2xl border border-violet-200 bg-white p-5 shadow-sm"
+                            >
+                              <h3 className="mb-4 text-lg font-black text-slate-900">{textQuestion.cardTitle}</h3>
+                              {field}
+                            </div>
+                          )
+                        }
+
+                        return field
                       })}
 
                       {blockError ? (
@@ -698,7 +760,7 @@ export default function IaConcessionariasPage() {
                           </Button>
                         ) : (
                           <Button type="submit" disabled={isSubmitting} className="h-12 rounded-full bg-violet-600 px-8 text-white hover:bg-violet-700">
-                            {isSubmitting ? "Enviando..." : "Enviar Briefing IA"}
+                            {isSubmitting ? "Enviando..." : "Finalizar"}
                           </Button>
                         )}
                       </div>
