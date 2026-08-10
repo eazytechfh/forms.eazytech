@@ -1,0 +1,115 @@
+
+> prospect-vendas@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.108:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.2s
+ ○ Compiling /interno ...
+ ✓ Compiled /interno in 1621ms (687 modules)
+ GET /interno 200 in 2497ms
+ GET /interno 200 in 129ms
+ ○ Compiling /api/internal/session ...
+ ✓ Compiled /api/internal/session in 1000ms (723 modules)
+ GET /api/internal/session 200 in 1277ms
+ ✓ Compiled /api/jira/projects in 410ms (731 modules)
+ POST /api/jira/projects 502 in 10787ms
+ ✓ Compiled in 3.1s (702 modules)
+ ✓ Compiled /api/internal/session in 2.8s (702 modules)
+ ✓ Compiled (737 modules)
+ GET /api/internal/session 200 in 643ms
+ GET /interno 200 in 3524ms
+ GET /interno 200 in 58ms
+ GET /interno 200 in 484ms
+ GET /api/internal/session 200 in 116ms
+ ○ Compiling /api/jira/projects ...
+ ✓ Compiled /api/jira/projects in 1438ms (446 modules)
+ GET /interno 200 in 340ms
+ POST /api/jira/projects 502 in 17379ms
+ ✓ Compiled in 1098ms (702 modules)
+ GET /interno 200 in 613ms
+ ✓ Compiled in 612ms (299 modules)
+ GET /interno 200 in 87ms
+ GET /interno 200 in 342ms
+ ✓ Compiled /api/internal/session in 356ms (438 modules)
+ GET /api/internal/session 200 in 584ms
+ GET /interno 200 in 369ms
+ ✓ Compiled /api/jira/projects in 211ms (446 modules)
+ GET /interno 200 in 347ms
+ POST /api/jira/projects 502 in 9476ms
+ ✓ Compiled in 1189ms (702 modules)
+ GET /interno 200 in 505ms
+ ✓ Compiled /api/internal/session in 177ms (438 modules)
+ POST /api/internal/session 200 in 4274ms
+ ✓ Compiled /api/jira/projects in 302ms (446 modules)
+ GET /interno 200 in 424ms
+jira_project_created { projectId: 12002, projectKey: 'CV2' }
+ POST /api/jira/projects 200 in 16334ms
+ POST /api/internal/session 200 in 32ms
+jira_project_created { projectId: 12003, projectKey: 'CT2' }
+ POST /api/jira/projects 200 in 9194ms
+ ○ Compiling /api/jira/issues/bulk ...
+ ✓ Compiled /api/jira/issues/bulk in 12.8s (749 modules)
+ POST /api/jira/issues/bulk 403 in 16958ms
+ GET /interno 200 in 783ms
+ ✓ Compiled in 1612ms (744 modules)
+ GET /interno 200 in 402ms
+ ✓ Compiled /api/internal/session in 152ms (438 modules)
+ POST /api/internal/session 200 in 280ms
+ ✓ Compiled /api/jira/projects in 162ms (446 modules)
+jira_project_created { projectId: 12004, projectKey: 'CF2' }
+ POST /api/jira/projects 200 in 16342ms
+ ✓ Compiled /api/jira/issues/bulk in 244ms (450 modules)
+ POST /api/jira/issues/bulk 403 in 368ms
+ ✓ Compiled in 1527ms (702 modules)
+ GET /interno 200 in 678ms
+ ✓ Compiled in 773ms (299 modules)
+ GET /interno 200 in 78ms
+ ✓ Compiled /api/internal/session in 241ms (438 modules)
+ POST /api/internal/session 200 in 478ms
+ ✓ Compiled /api/jira/projects in 483ms (446 modules)
+ GET /interno 200 in 375ms
+ POST /api/jira/projects 400 in 1486ms
+ ✓ Compiled in 705ms (745 modules)
+ GET /interno 200 in 300ms
+ POST /api/internal/session 200 in 69ms
+ POST /api/jira/projects 500 in 6602ms
+ ✓ Compiled in 831ms (745 modules)
+ GET /interno 200 in 382ms
+ POST /api/internal/session 200 in 68ms
+jira_project_created { projectId: 12006, projectKey: 'NC1', capabilityLength: 191 }
+ POST /api/jira/projects 200 in 14394ms
+ ✓ Compiled /api/jira/issues/bulk in 308ms (450 modules)
+ GET /interno 200 in 245ms
+jira_bulk_created { projectId: '12006', count: 2 }
+ POST /api/jira/issues/bulk 200 in 3135ms
+ GET /interno 200 in 403ms
+ GET /api/internal/session 200 in 38ms
+jira_project_created { projectId: 12007, projectKey: 'UT', capabilityLength: 191 }
+ POST /api/jira/projects 200 in 5735ms
+jira_bulk_created { projectId: '12007', count: 29 }
+ POST /api/jira/issues/bulk 200 in 14834ms
+ ✓ Compiled in 792ms (299 modules)
+ GET /interno 200 in 103ms
+ ✓ Compiled in 1229ms (702 modules)
+ GET /interno 200 in 559ms
+ ✓ Compiled /api/jira/projects in 312ms (444 modules)
+ GET /interno 200 in 526ms
+jira_project_created { projectId: 12008, projectKey: 'AUTOJANS', capabilityLength: 191 }
+ POST /api/jira/projects 200 in 7090ms
+ ✓ Compiled /api/jira/issues/bulk in 291ms (448 modules)
+ GET /interno 200 in 196ms
+jira_bulk_created { projectId: '12008', count: 29 }
+ POST /api/jira/issues/bulk 200 in 13579ms
+jira_project_created { projectId: 12009, projectKey: 'ACROAR', capabilityLength: 191 }
+ POST /api/jira/projects 200 in 7037ms
+jira_bulk_created { projectId: '12009', count: 29 }
+ POST /api/jira/issues/bulk 200 in 16595ms
+jira_project_created { projectId: 12010, projectKey: 'ACROAR', capabilityLength: 191 }
+ POST /api/jira/projects 200 in 5606ms
+jira_bulk_created { projectId: '12010', count: 12 }
+ POST /api/jira/issues/bulk 200 in 7781ms

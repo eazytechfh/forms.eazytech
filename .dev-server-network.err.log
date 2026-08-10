@@ -1,0 +1,11 @@
+jira_api_error {
+  status: 404,
+  endpoint: '/rest/api/3/workflows',
+  details: '{"errorMessages":["Not found"],"errors":{}}'
+}
+jira_bulk_rejected { reason: 'project_capability' }
+jira_api_error {
+  status: 400,
+  endpoint: '/rest/api/3/project',
+  details: `{"errorMessages":[],"errors":{"projectKey":"O projeto 'CODEX TAREFAS 20260810144728' utiliza esta chave de projeto."}}`
+}

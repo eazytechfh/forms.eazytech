@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { AlertCircle, Check, CheckCircle2, Plus, RotateCcw, Save, Send, Trash2 } from "lucide-react"
 
@@ -12,19 +12,29 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
+import { calculateDueDate, todayInSaoPaulo } from "@/lib/jira/due-date"
+import { resolveTaskRule, type TaskAssigneeRole } from "@/lib/jira/task-rules"
 import { taskTemplates, type TaskTemplateName } from "./taskTemplates"
 
 const N8N_BASE_URL = "https://n8n.eazy.tec.br"
-const PROJECT_WEBHOOK = "https://eazytech-n8n.gsl3ku.easypanel.host/webhook/3eb4bcf4-9806-41a8-aad7-5d678804901a"
-const TASKS_WEBHOOK = "https://eazytech-n8n.gsl3ku.easypanel.host/webhook/f434992a-b0c8-4780-bdf5-a11cdf0564d7"
 const CALL_WEBHOOK = `${N8N_BASE_URL}/webhook/8bb0d014-dc5c-4a90-aaf4-d1ac85bd062b`
 
 type Step = 1 | 2 | 3
 type ProjectStatus = "idle" | "pendente" | "sucesso" | "erro"
-type ProjectResult = { projectId: string; projectKey: string; issueTypeId: string }
+type ProjectResult = { projectId: string; projectKey: string; projectToken: string; createdDate: string }
 type Feedback = { type: "success" | "error"; message: string } | null
 type Assignee = "" | "fernando" | "felipe" | "jacqueline" | "herbert"
-type Task = { id: string; selected: boolean; title: string; assignee: Assignee }
+type Executor = "felipe" | "jacqueline"
+type Task = {
+  id: string
+  templateTaskIndex: number | null
+  selected: boolean
+  title: string
+  assignee: Assignee
+  assignment: TaskAssigneeRole
+  dueOffsetDays: number
+  dueDate: string
+}
 type ChecklistKey = "apresentou_eazysales" | "definiu_agentes" | "coletou_estoque" | "confirmou_crm" | "definiu_responsavel"
 
 const providers = ["Uazapi", "Zaptos", "API Oficial (Meta)"]
@@ -45,17 +55,37 @@ const assignees: { value: Assignee; label: string }[] = [
   { value: "herbert", label: "Herbert" },
 ]
 
-const makeTask = (title = ""): Task => ({
-  id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-  selected: true,
-  title,
-  assignee: "",
-})
+const assigneeLabels = Object.fromEntries(assignees.map(({ value, label }) => [value, label])) as Record<Assignee, string>
+
+const makeTask = (
+  title = "",
+  baseDate = todayInSaoPaulo(),
+  executor: Executor | "" = "",
+  template?: TaskTemplateName,
+  templateTaskIndex: number | null = null,
+): Task => {
+  const rule = resolveTaskRule(title, template)
+  return {
+    id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    templateTaskIndex,
+    selected: true,
+    title,
+    assignment: rule.assignee,
+    assignee: rule.assignee === "executor" ? executor : rule.assignee,
+    dueOffsetDays: rule.dueOffsetDays,
+    dueDate: calculateDueDate(baseDate, rule.dueOffsetDays, true),
+  }
+}
 
 export default function InternoPage() {
+  const [authStatus, setAuthStatus] = useState<"checking" | "authenticated" | "unauthenticated">("checking")
+  const [accessPassword, setAccessPassword] = useState("")
+  const [accessError, setAccessError] = useState("")
+  const [accessSubmitting, setAccessSubmitting] = useState(false)
   const [step, setStep] = useState<Step>(1)
   const [company, setCompany] = useState("")
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>("idle")
+  const [projectError, setProjectError] = useState("")
   const [project, setProject] = useState<ProjectResult | null>(null)
   const [provider, setProvider] = useState(providers[0])
   const [numberType, setNumberType] = useState(numberOptions[0])
@@ -64,28 +94,60 @@ export default function InternoPage() {
   const [callSubmitting, setCallSubmitting] = useState(false)
   const [callFeedback, setCallFeedback] = useState<Feedback>(null)
   const [template, setTemplate] = useState<TaskTemplateName | null>(null)
+  const [executor, setExecutor] = useState<Executor | "">("")
   const [tasks, setTasks] = useState<Task[]>([])
   const [tasksSubmitting, setTasksSubmitting] = useState(false)
   const [tasksFeedback, setTasksFeedback] = useState<Feedback>(null)
+
+  useEffect(() => {
+    void fetch("/api/internal/session", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((body: { authenticated?: boolean }) => setAuthStatus(body.authenticated ? "authenticated" : "unauthenticated"))
+      .catch(() => setAuthStatus("unauthenticated"))
+  }, [])
+
+  const authenticate = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setAccessSubmitting(true)
+    setAccessError("")
+    try {
+      const response = await fetch("/api/internal/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: accessPassword }),
+      })
+      const body = (await response.json()) as { error?: string }
+      if (!response.ok) throw new Error(body.error || "Não foi possível entrar")
+      setAccessPassword("")
+      setAuthStatus("authenticated")
+    } catch (error) {
+      setAccessError(error instanceof Error ? error.message : "Não foi possível entrar")
+    } finally {
+      setAccessSubmitting(false)
+    }
+  }
 
   const createProject = async () => {
     const nomeEmpresa = company.trim()
     if (!nomeEmpresa) return
     setProjectStatus("pendente")
+    setProjectError("")
     setProject(null)
     try {
-      const response = await fetch(PROJECT_WEBHOOK, {
+      const response = await fetch("/api/jira/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nomeEmpresa }),
       })
-      if (!response.ok) throw new Error("Erro ao criar projeto")
-      const result = (await response.json()) as Partial<ProjectResult>
-      if (!result.projectId || !result.projectKey || !result.issueTypeId) throw new Error("Resposta inválida")
+      const body = (await response.json()) as Partial<ProjectResult> & { error?: string }
+      if (!response.ok) throw new Error(body.error || "Erro ao criar projeto")
+      const result = body
+      if (!result.projectId || !result.projectKey || !result.projectToken) throw new Error("Resposta inválida")
       setProject(result as ProjectResult)
       setProjectStatus("sucesso")
-    } catch {
+    } catch (error) {
       setProjectStatus("erro")
+      setProjectError(error instanceof Error ? error.message : "Erro ao criar projeto")
     }
   }
 
@@ -117,12 +179,39 @@ export default function InternoPage() {
 
   const selectTemplate = (name: TaskTemplateName) => {
     setTemplate(name)
-    setTasks(taskTemplates[name].map((title) => makeTask(title)))
+    setTasks(taskTemplates[name].map((title, index) => makeTask(title, project?.createdDate, executor, name, index)))
+    setTasksFeedback(null)
+  }
+
+  const selectExecutor = (person: Executor) => {
+    setExecutor(person)
+    setTasks((current) =>
+      current.map((task) => (task.assignment === "executor" ? { ...task, assignee: person } : task)),
+    )
     setTasksFeedback(null)
   }
 
   const updateTask = (id: string, patch: Partial<Task>) =>
     setTasks((current) => current.map((task) => (task.id === id ? { ...task, ...patch } : task)))
+
+  const updateTaskTitle = (id: string, title: string) => {
+    const rule = resolveTaskRule(title, template || undefined)
+    const baseDate = project?.createdDate || todayInSaoPaulo()
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              title,
+              assignment: rule.assignee,
+              assignee: rule.assignee === "executor" ? executor : rule.assignee,
+              dueOffsetDays: rule.dueOffsetDays,
+              dueDate: calculateDueDate(baseDate, rule.dueOffsetDays, true),
+            }
+          : task,
+      ),
+    )
+  }
 
   const submitTasks = async () => {
     if (projectStatus !== "sucesso" || !project) return
@@ -131,26 +220,47 @@ export default function InternoPage() {
       setTasksFeedback({ type: "error", message: "Selecione ao menos uma tarefa." })
       return
     }
-    if (selected.some((task) => !task.title.trim() || !task.assignee)) {
-      setTasksFeedback({ type: "error", message: "Preencha o título e o responsável de todas as tarefas selecionadas." })
+    if (!executor) {
+      setTasksFeedback({ type: "error", message: "Escolha Felipe ou Jacqueline como responsável operacional." })
+      return
+    }
+    if (selected.some((task) => !task.title.trim() || !task.assignee || !task.dueDate)) {
+      setTasksFeedback({ type: "error", message: "Preencha o título, o responsável e a data de todas as tarefas selecionadas." })
       return
     }
     setTasksSubmitting(true)
     setTasksFeedback(null)
     try {
-      const response = await fetch(TASKS_WEBHOOK, {
+      const response = await fetch("/api/jira/issues/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          projectId: project.projectId,
-          issueTypeId: project.issueTypeId,
-          tarefas: selected.map((task) => ({ titulo: task.title.trim(), responsavel: task.assignee, descricao: observations })),
+          projectToken: project.projectToken,
+          executor,
+          template,
+          tarefas: selected.map((task) => ({
+            templateTaskIndex: task.templateTaskIndex,
+            titulo: task.title.trim(),
+            descricao: observations,
+            dataLimite: task.dueDate,
+          })),
         }),
       })
-      if (!response.ok) throw new Error()
+      const body = (await response.json()) as { error?: string; partial?: boolean; retrySafe?: boolean; failedIndexes?: number[]; issues?: unknown[] }
+      if (response.status === 207) {
+        const failed = new Set(body.failedIndexes ?? [])
+        setTasks((current) => current.map((task) => {
+          const index = selected.findIndex((item) => item.id === task.id)
+          return index >= 0 && (!body.retrySafe || !failed.has(index)) ? { ...task, selected: false } : task
+        }))
+        const retry = body.retrySafe ? "Somente as falhas continuam selecionadas." : "Não reenvie este lote; confira as tarefas no Jira."
+        setTasksFeedback({ type: "error", message: `${body.issues?.length ?? 0} tarefa(s) criadas; ${body.error ?? "algumas falharam"}. ${retry}` })
+        return
+      }
+      if (!response.ok) throw new Error(body.error || "Não foi possível criar as tarefas")
       setTasksFeedback({ type: "success", message: "Tarefas enviadas para o Jira com sucesso!" })
-    } catch {
-      setTasksFeedback({ type: "error", message: "Não foi possível enviar as tarefas. Tente novamente." })
+    } catch (error) {
+      setTasksFeedback({ type: "error", message: error instanceof Error ? error.message : "Não foi possível enviar as tarefas. Tente novamente." })
     } finally {
       setTasksSubmitting(false)
     }
@@ -161,6 +271,25 @@ export default function InternoPage() {
     { number: 2 as Step, title: "Call com cliente", detail: "Infraestrutura e observações" },
     { number: 3 as Step, title: "Tarefas do projeto", detail: template || "Escolha o produto" },
   ]
+
+  if (authStatus === "checking") {
+    return <div className="flex min-h-screen items-center justify-center bg-violet-50"><Spinner /></div>
+  }
+
+  if (authStatus === "unauthenticated") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-violet-50 p-4">
+        <Card className="w-full max-w-md"><CardContent className="pt-6">
+          <form onSubmit={authenticate} className="space-y-4">
+            <div><h1 className="text-xl font-semibold">Briefing interno</h1><p className="text-sm text-slate-600">Informe a senha de acesso da equipe.</p></div>
+            <Input type="password" value={accessPassword} onChange={(event) => setAccessPassword(event.target.value)} autoComplete="current-password" required />
+            {accessError && <p className="text-sm text-red-600">{accessError}</p>}
+            <Button className="w-full" disabled={accessSubmitting}>{accessSubmitting ? <Spinner /> : "Entrar"}</Button>
+          </form>
+        </CardContent></Card>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(139,92,246,0.16),_transparent_32%),linear-gradient(180deg,_#fff_0%,_#f6f0ff_45%,_#fff_100%)] text-slate-900">
@@ -195,7 +324,7 @@ export default function InternoPage() {
                       <div className={`mt-3 flex items-center gap-2 text-xs font-semibold ${active ? "text-white" : projectStatus === "erro" ? "text-rose-600" : "text-slate-500"}`}>
                         {projectStatus === "pendente" && <><Spinner className="h-3.5 w-3.5" /> Criando projeto...</>}
                         {projectStatus === "sucesso" && <><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Projeto criado{project ? ` · ${project.projectKey}` : ""}</>}
-                        {projectStatus === "erro" && <><AlertCircle className="h-4 w-4" /> Erro ao criar projeto</>}
+                        {projectStatus === "erro" && <><AlertCircle className="h-4 w-4" /> {projectError || "Erro ao criar projeto"}</>}
                       </div>
                     )}
                   </button>
@@ -253,28 +382,41 @@ export default function InternoPage() {
 
                     {template && (
                       <section className="space-y-3 border-t border-violet-100 pt-7">
+                        <div className="mb-5 rounded-2xl border border-violet-200 bg-violet-50/60 p-4">
+                          <h4 className="font-bold text-slate-900">Responsável operacional</h4>
+                          <p className="mb-3 mt-1 text-sm text-slate-500">Fernando e Herbert permanecem nas tarefas fixas. Escolha quem receberá as demais.</p>
+                          <div className="flex flex-wrap gap-2">
+                            <Choice active={executor === "felipe"} onClick={() => selectExecutor("felipe")}>Felipe</Choice>
+                            <Choice active={executor === "jacqueline"} onClick={() => selectExecutor("jacqueline")}>Jacqueline</Choice>
+                          </div>
+                        </div>
                         {tasks.map((task) => (
-                          <div key={task.id} className="grid gap-3 rounded-2xl border border-violet-200 bg-white p-3 md:grid-cols-[auto_1fr_210px_auto] md:items-center">
+                          <div key={task.id} className="grid gap-3 rounded-2xl border border-violet-200 bg-white p-3 md:grid-cols-[auto_minmax(0,1fr)_190px_165px_auto] md:items-center">
                             <Checkbox checked={task.selected} onCheckedChange={(checked) => updateTask(task.id, { selected: checked === true })} aria-label="Incluir tarefa" />
-                            <Input value={task.title} onChange={(event) => updateTask(task.id, { title: event.target.value })} placeholder="Título da tarefa" className="border-violet-200" />
-                            <select value={task.assignee} onChange={(event) => updateTask(task.id, { assignee: event.target.value as Assignee })} className="h-10 rounded-md border border-violet-200 bg-white px-3 text-sm">
-                              {assignees.map((person) => <option key={person.value} value={person.value}>{person.label}</option>)}
-                            </select>
+                            <Input value={task.title} onChange={(event) => updateTaskTitle(task.id, event.target.value)} readOnly={task.templateTaskIndex !== null} placeholder="Título da tarefa" className="border-violet-200" />
+                            <div className="rounded-md border border-violet-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                              {task.assignee ? assigneeLabels[task.assignee] : "Escolha o responsável"}
+                              <span className="block text-[11px] text-slate-400">{task.assignment === "executor" ? "Operacional" : "Responsável fixo"}</span>
+                            </div>
+                            <div>
+                              <Label htmlFor={`due-${task.id}`} className="mb-1 block text-[11px] text-slate-500">Data limite</Label>
+                              <Input id={`due-${task.id}`} type="date" value={task.dueDate} readOnly={task.templateTaskIndex !== null} onChange={(event) => updateTask(task.id, { dueDate: event.target.value })} className="border-violet-200" />
+                            </div>
                             <Button type="button" variant="ghost" size="icon" onClick={() => setTasks((old) => old.filter((item) => item.id !== task.id))} className="text-rose-500 hover:bg-rose-50 hover:text-rose-600"><Trash2 /></Button>
                           </div>
                         ))}
-                        <Button type="button" variant="outline" onClick={() => setTasks((old) => [...old, makeTask()])} className="rounded-full border-violet-300 text-violet-700"><Plus /> Adicionar tarefa</Button>
+                        <Button type="button" variant="outline" onClick={() => setTasks((old) => [...old, makeTask("", project?.createdDate, executor, template)])} className="rounded-full border-violet-300 text-violet-700"><Plus /> Adicionar tarefa</Button>
                       </section>
                     )}
 
                     <section className="space-y-3 border-t border-violet-100 pt-7">
                       {projectStatus !== "sucesso" && (
                         <div className={`rounded-2xl border p-4 text-sm ${projectStatus === "erro" ? "border-rose-200 bg-rose-50 text-rose-700" : "border-amber-200 bg-amber-50 text-amber-700"}`}>
-                          {projectStatus === "erro" ? "O projeto não foi criado. Tente novamente antes de enviar as tarefas." : "Aguarde a criação do projeto no Jira para enviar as tarefas."}
+                          {projectStatus === "erro" ? projectError || "O projeto não foi criado. Tente novamente antes de enviar as tarefas." : "Aguarde a criação do projeto no Jira para enviar as tarefas."}
                           {projectStatus === "erro" && <Button type="button" size="sm" variant="outline" onClick={() => void createProject()} className="ml-3 rounded-full border-rose-300"><RotateCcw /> Tentar criar projeto novamente</Button>}
                         </div>
                       )}
-                      <Button type="button" onClick={() => void submitTasks()} disabled={projectStatus !== "sucesso" || tasksSubmitting || !template} className="h-12 rounded-full bg-violet-600 px-7 hover:bg-violet-700">
+                      <Button type="button" onClick={() => void submitTasks()} disabled={projectStatus !== "sucesso" || tasksSubmitting || !template || !executor} className="h-12 rounded-full bg-violet-600 px-7 hover:bg-violet-700">
                         {tasksSubmitting ? <Spinner /> : <Send />} {tasksSubmitting ? "Enviando..." : "Enviar tarefas para o Jira"}
                       </Button>
                       <FeedbackBox feedback={tasksFeedback} />

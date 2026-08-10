@@ -1,0 +1,27 @@
+
+> prospect-vendas@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.108:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 5.6s
+ ○ Compiling /interno ...
+ ✓ Compiled /interno in 7.9s (720 modules)
+ GET /interno 200 in 8733ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1923ms (788 modules)
+ GET / 200 in 2507ms
+ ✓ Compiled /interno in 257ms (460 modules)
+ GET /interno 200 in 598ms
+ ○ Compiling /api/internal/session ...
+ ✓ Compiled /api/internal/session in 854ms (834 modules)
+ GET /api/internal/session 200 in 1219ms
+ POST /api/internal/session 200 in 29ms
+ ✓ Compiled /api/jira/projects in 503ms (842 modules)
+ POST /api/jira/projects 500 in 684ms
+ POST /api/jira/projects 500 in 36ms
+[?25h
