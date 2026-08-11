@@ -17,8 +17,16 @@ export function jiraErrorResponse(error: unknown) {
     if (error.status === 400) {
       let reason = "O Jira rejeitou os dados enviados"
       try {
-        const body = JSON.parse(error.details) as { errorMessages?: string[]; errors?: Record<string, string> }
-        reason = body.errorMessages?.[0] || Object.values(body.errors || {})[0] || reason
+        const body = JSON.parse(error.details) as {
+          errorMessages?: string[]
+          errors?: Record<string, string> | Array<{ elementErrors?: { errorMessages?: string[]; errors?: Record<string, string> } }>
+        }
+        const nested = Array.isArray(body.errors) ? body.errors[0]?.elementErrors : undefined
+        reason = body.errorMessages?.[0]
+          || (!Array.isArray(body.errors) ? Object.values(body.errors || {})[0] : undefined)
+          || nested?.errorMessages?.[0]
+          || Object.values(nested?.errors || {})[0]
+          || reason
       } catch {}
       return NextResponse.json({ error: reason }, { status: 400 })
     }

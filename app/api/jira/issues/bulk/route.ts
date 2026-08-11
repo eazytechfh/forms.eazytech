@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { taskTemplates } from "@/app/interno/taskTemplates.ts"
 import { getInternalAuthConfig, isInternalRequestAuthenticated, verifyProjectCapability } from "@/lib/jira/auth.ts"
 import { jiraRequest } from "@/lib/jira/client.ts"
-import { getJiraAccountIds, getJiraConfig } from "@/lib/jira/config.ts"
+import { getJiraAccountIds } from "@/lib/jira/config.ts"
 import { calculateDueDate } from "@/lib/jira/due-date.ts"
 import { isSameOrigin, jiraErrorResponse } from "@/lib/jira/http.ts"
 import { buildBulkIssuePayload } from "@/lib/jira/payloads.ts"
@@ -44,13 +44,11 @@ export async function POST(request: Request) {
     }
     await assertStandardWorkflow(capability.projectId)
 
-    const config = getJiraConfig()
     const payload = buildBulkIssuePayload({
       projectId: capability.projectId,
       issueTypeId: capability.issueTypeId,
       executor: input.data.executor,
       template: input.data.template,
-      reporterAccountId: config.reporterAccountId,
       accountIds: getJiraAccountIds(),
       tasks: input.data.tarefas.map((task) => {
         if (task.templateTaskIndex === null) {

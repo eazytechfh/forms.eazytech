@@ -14,7 +14,6 @@ test("monta tarefas com responsaveis fixos, executor e datas", () => {
   const payload = buildBulkIssuePayload({
     projectId: "12000",
     issueTypeId: "13000",
-    reporterAccountId: accountIds.fernando,
     template: "TAREFAS EAZY PRO CONCESSIONARIA",
     executor: "jacqueline",
     accountIds,
@@ -40,14 +39,13 @@ test("monta tarefas com responsaveis fixos, executor e datas", () => {
     version: 1,
     content: [{ type: "paragraph", content: [{ type: "text", text: "Observação do projeto" }] }],
   })
-  assert.equal(payload.issueUpdates[0].fields.reporter.accountId, accountIds.fernando)
+  assert.equal("reporter" in payload.issueUpdates[0].fields, false)
 })
 
 test("atribui tarefas tecnicas fixas ao Herbert", () => {
   const payload = buildBulkIssuePayload({
     projectId: "12000",
     issueTypeId: "13000",
-    reporterAccountId: accountIds.fernando,
     template: "TAREFAS EAZY PRO CONCESSIONARIA",
     executor: "felipe",
     accountIds,

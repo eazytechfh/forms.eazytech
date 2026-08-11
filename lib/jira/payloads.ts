@@ -14,7 +14,6 @@ export type BulkTaskInput = {
 type BulkIssuePayloadInput = {
   projectId: string
   issueTypeId: string
-  reporterAccountId: string
   template: JiraTaskTemplateName
   executor: Executor
   accountIds: JiraAccountIds
@@ -48,7 +47,6 @@ export function buildBulkIssuePayload(input: BulkIssuePayloadInput) {
           description: textToAdf(task.description.trim()),
           duedate: task.dueDate,
           assignee: { accountId: input.accountIds[assigneeKey] },
-          reporter: { accountId: input.reporterAccountId },
         },
       }
     }),
