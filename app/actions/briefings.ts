@@ -36,24 +36,52 @@ export async function saveBriefingConcessionaria(payload: Record<string, unknown
 type BriefingId = string | number
 
 async function updateBriefing(table: "briefings_concessionarias" | "briefings_geral", id: BriefingId, payload: Record<string, unknown>): Promise<SaveResult> {
-  const supabaseAdmin = getSupabaseAdmin()
-  const update = {
-    nome_empresa: payload.nomeEmpresa ?? payload.nome_empresa,
-    telefone: payload.telefoneContato ?? payload.telefone,
-    email: payload.email,
-    whatsapp_numero: payload.whatsapp_numero,
-    respostas: payload,
+  try {
+    const supabaseAdmin = getSupabaseAdmin()
+    const update = {
+      nome_empresa: payload.nomeEmpresa ?? payload.nome_empresa ?? "",
+      telefone: payload.telefoneContato ?? payload.telefone ?? "",
+      email: payload.email ?? "",
+      whatsapp_numero: payload.whatsapp_numero ?? "",
+      respostas: payload,
+    }
+    const { data, error } = await supabaseAdmin.from(table).update(update).eq("id", id).select("id").maybeSingle()
+
+    if (error) {
+      console.error(`Erro ao atualizar ${table}:`, error)
+      return { error: error.message }
+    }
+    if (!data) {
+      const message = `Briefing ${String(id)} nao encontrado em ${table}`
+      console.error(message)
+      return { error: message }
+    }
+    return { error: null }
+  } catch (error) {
+    console.error(`Excecao ao atualizar ${table}:`, error)
+    return { error: error instanceof Error ? error.message : "Erro desconhecido ao atualizar briefing" }
   }
-  const { error } = await supabaseAdmin.from(table).update(update).eq("id", id)
-  console.log(error)
-  return { error: error?.message ?? null }
 }
 
 async function deleteBriefing(table: "briefings_concessionarias" | "briefings_geral", id: BriefingId): Promise<SaveResult> {
-  const supabaseAdmin = getSupabaseAdmin()
-  const { error } = await supabaseAdmin.from(table).delete().eq("id", id)
-  console.log(error)
-  return { error: error?.message ?? null }
+  try {
+    const supabaseAdmin = getSupabaseAdmin()
+    const { data, error } = await supabaseAdmin.from(table).delete().eq("id", id).select("id").maybeSingle()
+
+    if (error) {
+      console.error(`Erro ao excluir de ${table}:`, error)
+      return { error: error.message }
+    }
+    if (!data) {
+      const message = `Briefing ${String(id)} nao encontrado em ${table}`
+      console.error(message)
+      return { error: message }
+    }
+    return { error: null }
+  } catch (error) {
+    console.error(`Excecao ao excluir de ${table}:`, error)
+    return { error: error instanceof Error ? error.message : "Erro desconhecido ao excluir briefing" }
+  }
 }
 
 export async function updateBriefingConcessionaria(id: BriefingId, payload: Record<string, unknown>) {

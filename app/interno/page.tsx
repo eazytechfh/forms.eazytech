@@ -120,44 +120,52 @@ export default function InternoPage() {
     }
 
     setBriefingSaving(true)
-    const respostas = getBriefingAnswers(briefing)
-    const payload = Object.fromEntries(Object.entries(editValues).map(([field, value]) => [field, restoreBriefingValue(value, respostas[field])]))
-    const result = briefingTable === "briefings_concessionarias"
-      ? await updateBriefingConcessionaria(briefing.id, payload)
-      : await updateBriefingGeral(briefing.id, payload)
+    try {
+      const respostas = getBriefingAnswers(briefing)
+      const payload = Object.fromEntries(Object.entries(editValues).map(([field, value]) => [field, restoreBriefingValue(value, respostas[field])]))
+      const result = briefingTable === "briefings_concessionarias"
+        ? await updateBriefingConcessionaria(briefing.id, payload)
+        : await updateBriefingGeral(briefing.id, payload)
 
-    if (result.error) {
-      setBriefingActionError((current) => ({ ...current, [key]: "Erro ao salvar. Tente novamente." }))
-    } else {
+      if (result.error) throw new Error(result.error)
       setBriefings((current) => current.map((item) => item.id === briefing.id ? {
-        ...item,
-        nome_empresa: payload.nomeEmpresa ?? payload.nome_empresa,
-        telefone: payload.telefoneContato ?? payload.telefone,
-        email: payload.email,
-        whatsapp_numero: payload.whatsapp_numero,
-        respostas: payload,
-      } : item))
+          ...item,
+          nome_empresa: payload.nomeEmpresa ?? payload.nome_empresa,
+          telefone: payload.telefoneContato ?? payload.telefone,
+          email: payload.email,
+          whatsapp_numero: payload.whatsapp_numero,
+          respostas: payload,
+        } : item))
       setEditingBriefing(null)
       setBriefingActionError((current) => ({ ...current, [key]: "" }))
+    } catch {
+      setBriefingActionError((current) => ({ ...current, [key]: "Erro ao salvar. Tente novamente." }))
+    } finally {
+      setBriefingSaving(false)
     }
-    setBriefingSaving(false)
   }
 
   const confirmBriefingDelete = async () => {
     if (!briefingTable || deleteTarget?.id === undefined) return
     const key = getBriefingKey(deleteTarget, 0)
     setBriefingDeleting(true)
-    const result = briefingTable === "briefings_concessionarias"
-      ? await deleteBriefingConcessionaria(deleteTarget.id)
-      : await deleteBriefingGeral(deleteTarget.id)
+    setBriefingsError("")
+    try {
+      const result = briefingTable === "briefings_concessionarias"
+        ? await deleteBriefingConcessionaria(deleteTarget.id)
+        : await deleteBriefingGeral(deleteTarget.id)
 
-    if (result.error) {
-      setBriefingActionError((current) => ({ ...current, [key]: "Erro ao excluir. Tente novamente." }))
-    } else {
+      if (result.error) throw new Error(result.error)
       setBriefings((current) => current.filter((item) => item.id !== deleteTarget.id))
       setDeleteTarget(null)
+      setBriefingActionError((current) => ({ ...current, [key]: "" }))
+    } catch {
+      setBriefingActionError((current) => ({ ...current, [key]: "Erro ao excluir. Tente novamente." }))
+      setDeleteTarget(null)
+      setBriefingsError("Erro ao excluir briefing. Tente novamente.")
+    } finally {
+      setBriefingDeleting(false)
     }
-    setBriefingDeleting(false)
   }
 
   const downloadBriefingPdf = async (briefing: Briefing, key: string) => {

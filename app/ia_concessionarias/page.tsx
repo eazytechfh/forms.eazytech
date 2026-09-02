@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { saveBriefingConcessionaria } from "@/app/actions/briefings"
 
-type FieldType = "text" | "email" | "tel" | "url" | "textarea" | "password" | "number"
+type FieldType = "text" | "email" | "tel" | "url" | "textarea" | "number"
 type ChoiceType = "checkbox" | "radio"
 
 type BaseQuestion = {
@@ -111,7 +111,7 @@ const blocks: Block[] = [
         name: "sistema_estoque_senha",
         label: "Senha de acesso",
         placeholder: "Digite a senha de acesso",
-        type: "password",
+        type: "text",
         required: true,
       },
       {
