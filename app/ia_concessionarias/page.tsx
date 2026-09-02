@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { saveBriefingConcessionaria } from "@/app/actions/briefings"
 
 type FieldType = "text" | "email" | "tel" | "url" | "textarea" | "password" | "number"
 type ChoiceType = "checkbox" | "radio"
@@ -93,17 +94,33 @@ const blocks: Block[] = [
         required: true,
       },
       {
-        name: "revendaMaisEmail",
-        label: "Acesso ao Revenda Mais - Email",
+        name: "sistema_estoque",
+        kind: "radio",
+        label: "Qual sistema de estoque sua loja utiliza?",
+        options: ["Revenda Mais", "AutoGestor", "AutoCerto"],
+        required: true,
+      },
+      {
+        name: "sistema_estoque_email",
+        label: "Email de acesso",
         placeholder: "Digite o email de acesso",
         type: "email",
         required: true,
       },
       {
-        name: "revendaMaisSenha",
-        label: "Acesso ao Revenda Mais - Senha",
+        name: "sistema_estoque_senha",
+        label: "Senha de acesso",
         placeholder: "Digite a senha de acesso",
         type: "password",
+        required: true,
+      },
+      {
+        name: "whatsapp_numero",
+        label: "Qual sera o numero do WhatsApp conectado na IA?",
+        helper:
+          "Deve ser o numero que recebera as mensagens iniciais dos leads e que esta, ou será vinculado nos anuncios do trafego, caso tenham trafego ativo",
+        placeholder: "(11) 99999-9999",
+        type: "tel",
         required: true,
       },
       {
@@ -202,11 +219,22 @@ const blocks: Block[] = [
       },
       {
         name: "formas_pagamento",
-        cardTitle: "Formas de pagamento",
-        label:
-          "Voces aceitam boleto ou promissoria? Cartao de credito e aceito? Ha limite de parcelas no cartao ou alguma observacao?",
-        placeholder: "Descreva as formas de pagamento aceitas e restricoes...",
-        type: "textarea",
+        kind: "checkbox",
+        label: "Quais formas de pagamento sua loja aceita?",
+        helper: "Selecione todas as opcoes disponiveis",
+        options: [
+          "Financiamento bancario (CDC)",
+          "Veiculo usado na troca",
+          "Cartao de credito",
+          "Leasing ou Credito Direto ao Consumidor",
+          "Carta de credito",
+          "Outros",
+        ],
+      },
+      {
+        name: "formas_pagamento_outros",
+        label: "Outras formas de pagamento",
+        placeholder: "Descreva outras formas aceitas...",
       },
     ],
   },
@@ -324,6 +352,14 @@ export default function IaConcessionariasPage() {
       return (checkboxValues.portaisAtivos ?? []).includes("OLX")
     }
 
+    if (question.name === "formas_pagamento_outros") {
+      return (checkboxValues.formas_pagamento ?? []).includes("Outros")
+    }
+
+    if (question.name === "sistema_estoque_email" || question.name === "sistema_estoque_senha") {
+      return Boolean(radioValues.sistema_estoque)
+    }
+
     return true
   }
 
@@ -367,30 +403,21 @@ export default function IaConcessionariasPage() {
 
     setIsSubmitting(true)
 
-    const { gmailCanaisEmail = "", gmailCanaisSenha = "", ...textPayload } = textValues
-
     const payload = {
-      tipoFormulario: "Briefing IA - Concessionarias",
-      enviadoEm: new Date().toISOString(),
-      ...textPayload,
-      gmailCanais: `${gmailCanaisEmail.trim()} / ${gmailCanaisSenha.trim()}`,
+      ...textValues,
       ...radioValues,
-      ...Object.fromEntries(Object.entries(checkboxValues).map(([key, value]) => [key, value.join(", ")])),
+      ...checkboxValues,
     }
 
     try {
-      const response = await fetch("https://n8n.eazy.tec.br/webhook/35937fba-85fc-401e-bf73-7d20f00dc982", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
+      const { error } = await saveBriefingConcessionaria(payload)
 
-      if (!response.ok) throw new Error("Erro ao enviar")
+      if (error) throw error
 
       setShowSuccessDialog(true)
       resetForm()
     } catch {
-      setBlockError("Nao foi possivel enviar o briefing agora. Tente novamente em alguns instantes.")
+      setBlockError("Erro ao salvar. Tente novamente.")
     } finally {
       setIsSubmitting(false)
     }
@@ -529,6 +556,7 @@ export default function IaConcessionariasPage() {
                                 {question.label}
                                 {question.required ? " *" : ""}
                               </Label>
+                              {question.helper ? <p className="text-sm text-slate-500">{question.helper}</p> : null}
                               <div className="grid gap-3 sm:grid-cols-2">
                                 {question.options.map((option) => {
                                   const checked = (checkboxValues[question.name] ?? []).includes(option)

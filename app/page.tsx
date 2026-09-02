@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { saveBriefingGeral } from "@/app/actions/briefings"
 
 type FieldType = "text" | "email" | "tel" | "url" | "textarea"
 
@@ -19,6 +20,7 @@ type Question = {
   name: string
   label: string
   placeholder: string
+  helper?: string
   type?: FieldType
   required?: boolean
 }
@@ -56,6 +58,15 @@ const blocks: Block[] = [
         label: "Email",
         placeholder: "contato@empresa.com.br",
         type: "email",
+        required: true,
+      },
+      {
+        name: "whatsapp_numero",
+        label: "Qual sera o numero do WhatsApp conectado na IA?",
+        helper:
+          "Deve ser o numero que recebera as mensagens iniciais dos leads e que esta, ou será vinculado nos anuncios do trafego, caso tenham trafego ativo",
+        placeholder: "(11) 99999-9999",
+        type: "tel",
         required: true,
       },
       {
@@ -386,32 +397,20 @@ export default function ProspectForms() {
 
     setIsSubmitting(true)
 
-    const payload = {
-      tipoFormulario: "Briefing IA",
-      enviadoEm: new Date().toISOString(),
-      ...formValues,
-    }
+    const payload = { ...formValues }
 
     try {
-      const response = await fetch("https://n8n.eazy.tec.br/webhook/a146aec8-4d86-4456-820c-84a6e13427c3", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
+      const { error } = await saveBriefingGeral(payload)
 
-      if (!response.ok) {
-        throw new Error("Erro ao enviar")
-      }
+      if (error) throw error
 
       setShowSuccessDialog(true)
       setStarted(false)
       setCurrentStep(0)
       setFormValues(initialValues)
       setBlockError("")
-    } catch (error) {
-      setBlockError("Nao foi possivel enviar o briefing agora. Tente novamente em alguns instantes.")
+    } catch {
+      setBlockError("Erro ao salvar. Tente novamente.")
     } finally {
       setIsSubmitting(false)
     }
@@ -563,6 +562,7 @@ export default function ProspectForms() {
                             {question.label}
                             {question.required ? " *" : ""}
                           </Label>
+                          {question.helper ? <p className="text-sm text-slate-500">{question.helper}</p> : null}
 
                           {question.type === "textarea" ? (
                             <Textarea
