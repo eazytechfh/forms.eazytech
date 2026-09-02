@@ -1,10 +1,11 @@
 "use server"
 
-import { supabaseAdmin } from "@/lib/supabase-admin"
+import { getSupabaseAdmin } from "@/lib/supabase-admin"
 
 type SaveResult = { error: string | null }
 
 export async function saveBriefingGeral(payload: Record<string, unknown>): Promise<SaveResult> {
+  const supabaseAdmin = getSupabaseAdmin()
   const briefing = {
     nome_empresa: payload.nomeEmpresa,
     telefone: payload.telefoneContato,
@@ -19,6 +20,7 @@ export async function saveBriefingGeral(payload: Record<string, unknown>): Promi
 }
 
 export async function saveBriefingConcessionaria(payload: Record<string, unknown>): Promise<SaveResult> {
+  const supabaseAdmin = getSupabaseAdmin()
   const briefing = {
     nome_empresa: payload.nomeEmpresa,
     telefone: payload.telefoneContato,
@@ -34,6 +36,7 @@ export async function saveBriefingConcessionaria(payload: Record<string, unknown
 type BriefingId = string | number
 
 async function updateBriefing(table: "briefings_concessionarias" | "briefings_geral", id: BriefingId, payload: Record<string, unknown>): Promise<SaveResult> {
+  const supabaseAdmin = getSupabaseAdmin()
   const update = {
     nome_empresa: payload.nomeEmpresa ?? payload.nome_empresa,
     telefone: payload.telefoneContato ?? payload.telefone,
@@ -47,6 +50,7 @@ async function updateBriefing(table: "briefings_concessionarias" | "briefings_ge
 }
 
 async function deleteBriefing(table: "briefings_concessionarias" | "briefings_geral", id: BriefingId): Promise<SaveResult> {
+  const supabaseAdmin = getSupabaseAdmin()
   const { error } = await supabaseAdmin.from(table).delete().eq("id", id)
   console.log(error)
   return { error: error?.message ?? null }
